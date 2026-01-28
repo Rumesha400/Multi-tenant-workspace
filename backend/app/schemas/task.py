@@ -13,3 +13,9 @@ class TaskResponse(BaseModel):
     description: Optional[str]
     status: str 
     assigneeId: Optional[str] 
+
+class UpdateTaskRequest(BaseModel):
+    title: Optional[str] = None 
+    description: Optional[str] = None 
+    status: Optional[str] = None 
+    assigneeId: Optional[str] = None
