@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 
 router = APIRouter(prefix="/org", tags=["Organization"])
 
-@router.get("/me")
+@router.get("/orgs/current")
 def get_my_org(current_user=Depends(get_current_user)):
     return { "message": "Access granted", "user": current_user }
 
