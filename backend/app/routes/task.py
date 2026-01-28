@@ -5,7 +5,7 @@ from datetime import datetime
 from app.schemas.task import CreateTaskRequest
 from app.core.tenant import get_tenant_context
 from app.core.permissions import require_role
-from app.db.mongo import tasks_collection, projects_collection
+from app.db.mongo import tasks_collection, project_members_collection, projects_collection
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -45,6 +45,15 @@ async def create_task(
 
 @router.get("/")
 async def list_tasks( projectId: str, tenant=Depends(get_tenant_context) ):
+    member = await project_members_collection.find_one({
+        "projectId": ObjectId(projectId),
+        "userId": ObjectId(tenant["user_id"]),
+        "orgId":ObjectId(tenant["org_id"]),
+    })
+
+    if not member:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not a member of this project")
+
     cursor = tasks_collection.find({
         "projectId": ObjectId(projectId),
         "orgId": ObjectId(tenant["org_id"]),
