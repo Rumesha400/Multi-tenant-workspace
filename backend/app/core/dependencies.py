@@ -14,20 +14,10 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         org_id = payload.get("org_id")
         role = payload.get("role")
 
-        if not user_id or not org_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication token"
-            )
+        if not user_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication token")
         
-        return {
-            "user_id": user_id,
-            "org_id": org_id,
-            "role": role,
-        }
+        return { "user_id": user_id, "org_id": org_id, "role": role }
 
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token is invalid or expired"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token is invalid or expired")
