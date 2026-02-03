@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import auth, organization, project, task, test
+from app.routes import auth, organization, project, task, test, task_comments
 
 tags_metadata = [
     {
@@ -19,6 +19,10 @@ tags_metadata = [
         "description": "Task management inside projects"
     },
     {
+        "name": "Task Comments",
+        "description": "Comments inside project's tasks"
+    },
+    {
         "name": "Test",
         "description": "Test API"
     }
@@ -30,6 +34,7 @@ app.include_router(auth.router)
 app.include_router(organization.router)
 app.include_router(project.router)
 app.include_router(task.router)
+app.include_router(task_comments.router)
 app.include_router(test.router)
 
 @app.get("/")
