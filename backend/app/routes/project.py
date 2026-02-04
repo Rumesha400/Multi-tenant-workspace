@@ -3,7 +3,6 @@ from bson import ObjectId
 from app.schemas.project import CreateProjectRequest
 from app.core.tenant import get_tenant_context
 from app.db.mongo import projects_collection, project_members_collection, org_members_collection
-from app.core.dependencies import get_current_user
 from app.core.permissions import require_role
 from app.schemas.project_member import AddProjectMemberRequest
 
@@ -36,22 +35,50 @@ async def create_project(payload: CreateProjectRequest, tenant=Depends(get_tenan
 
 @router.get("/")
 async def list_projects(tenant=Depends(get_tenant_context)):
-    cursor = projects_collection.find({ "orgId": ObjectId(tenant["org_id"])})
     projects = []
-    async for doc in cursor:
-        projects.append({
-            "id": str(doc["_id"]),
-            "name": doc["name"],
-            "description": doc.get("description"),
+
+    if tenant["role"] == "OWNER":
+        # OWNERs can see all projects in the organization
+        cursor = projects_collection.find({
+            "orgId": ObjectId(tenant["org_id"])
         })
+        
+        async for doc in cursor:
+            projects.append({
+                "id": str(doc["_id"]),
+                "name": doc["name"],
+                "description": doc.get("description"),
+                "role": "OWNER",
+            })
+    else:
+        # MEMBERs can only see projects they're assigned to
+        member_projects = project_members_collection.find({
+            "userId": ObjectId(tenant["user_id"]),
+            "orgId": ObjectId(tenant["org_id"])
+        })
+
+        # Get all project IDs the user is a member of
+        project_ids = [doc["projectId"] async for doc in member_projects]
+
+        if project_ids:
+            # Fetch all projects in one query using $in
+            cursor = projects_collection.find({
+                "_id": {"$in": project_ids},
+                "orgId": ObjectId(tenant["org_id"])
+            })
+
+            async for doc in cursor:
+                projects.append({
+                    "id": str(doc["_id"]),
+                    "name": doc["name"],
+                    "description": doc.get("description"),
+                    "role": "MEMBER",
+                })
+
     return projects
 
 @router.post("/{project_id}/members")
-async def add_project_member(
-    project_id: str,
-    payload: AddProjectMemberRequest,
-    tenant=Depends(get_tenant_context)
-):
+async def add_project_member(project_id: str, payload: AddProjectMemberRequest, tenant=Depends(get_tenant_context)):
     # Owner check
     if tenant["role"] != "OWNER":
         raise HTTPException(
