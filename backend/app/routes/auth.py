@@ -1,14 +1,15 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.schemas.auth import SignupResponse, AuthResponse, LoginRequest
-from app.db.mongo import users_collection, organizations_collection
+from app.schemas.auth import SignupRequest, SignupResponse, AuthResponse, LoginRequest
+from app.db.mongo import users_collection, org_members_collection
 from app.core.security import hash_password, create_access_token, verify_password
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/signup", response_model=SignupResponse)
-async def signup(payload: SignupResponse):
+async def signup(payload: SignupRequest):
     existing_user = await users_collection.find_one({"email": payload.email})
+
     if existing_user:
         raise HTTPException( status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered" )
     
@@ -31,18 +32,12 @@ async def login(payload: LoginRequest):
     if not user or not verify_password(payload.password, user["password"]):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 
-    # Fetch org membership
-    membership = await org_members_collection.find_one({
-        "userId": user["_id"]
-    })
-
-    if not membership:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not part of any organization")
+    membership = await org_members_collection.find_one({ "userId": user["_id"] })
 
     token = create_access_token({
         "user_id": str(user["_id"]),
-        "org_id": str(membership["orgId"]),
-        "role": membership["role"],
+        "org_id": str(membership["orgId"]) if membership else None,
+        "role": membership["role"] if membership else None,
     })
 
     return { "access_token": token, "token_type": "bearer" }

@@ -17,3 +17,7 @@ tasks_collection = db["tasks"]
 project_members_collection = db["project_members"]
 
 org_members_collection = db["org_members"]
+
+task_comments_collection = db["task_comments"]
+
+project_activities_collection = db["project_activities"]
