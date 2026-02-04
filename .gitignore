@@ -7,7 +7,7 @@ __pycache__/
 venv/
 .env
 
-# Node (future frontend)
+# Node Vite
 node_modules/
 .vite/
 dist/
