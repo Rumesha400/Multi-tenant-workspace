@@ -9,6 +9,8 @@ venv/
 
 # Node (future frontend)
 node_modules/
+.vite/
+dist/
 
 # IDEs
 .vscode/
