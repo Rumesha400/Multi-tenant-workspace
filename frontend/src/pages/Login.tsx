@@ -27,7 +27,7 @@ export default function Login() {
 
             navigate("/")
         } catch (err: any) {
-            alert(err?.response?.data?.detail || "Login failed")
+            alert(err?.data?.detail || "Login failed")
         }
     }
 
