@@ -1,5 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
-import type { RootState } from "@/store/store";
+import type { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 

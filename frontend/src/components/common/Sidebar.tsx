@@ -1,5 +1,8 @@
 import { CheckSquare, FolderKanban, LayoutDashboard, Settings } from "lucide-react"
 import { Button } from "../ui/button"
+import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { type RootState } from "@/store"
 
 const menuItems = [
     {
@@ -25,17 +28,22 @@ const menuItems = [
 ]
 
 export default function Sidebar() {
+    const { currentProjectName } = useSelector((state: RootState) => state.project)
     return (
         <div className="h-full flex flex-col gap-2 mt-6">
+            {currentProjectName && (
+                <div className="text-sm text-muted-foreground">Project: {currentProjectName}</div>
+            )}
             {menuItems.map((item) => (
-                <Button
-                    key={item.label}
-                    variant="ghost"
-                    className="w-full justify-start gap-2"
-                >
-                    <item.icon size={18} />
-                    {item.label}
-                </Button>
+                <Link to={item.path} key={item.label} className="w-full">
+                    <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2"
+                    >
+                        <item.icon size={18} />
+                        {item.label}
+                    </Button>
+                </Link>
             ))}
         </div>
     )
