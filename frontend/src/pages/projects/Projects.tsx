@@ -1,18 +1,24 @@
+import { useEffect } from "react";
 import CommonLoader from "@/components/common/Loader";
 import CreateProjectDialog from "@/components/projects/CreateProjectDialog";
 import { useGetProjectsQuery } from "@/store/api/projectApi";
 import { setProject } from "@/store/slices/projectSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Projects() {
     const { data, isLoading, error } = useGetProjectsQuery();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    if (error) {
-        return <div>Error: Failed to load projects</div>
-    }
+    useEffect(() => {
+        if (error) {
+            const err = error as any;
+            toast.error(err?.data?.detail || "Failed to fetch projects", { duration: 1000 });
+            navigate(`/login`);
+        }
+    }, [error]);
 
     return (isLoading ? <CommonLoader /> : (
         <div className="p-6 space-y-4">
@@ -23,8 +29,6 @@ export default function Projects() {
             <div className="grid gap-4">
                 {data?.map((project: any) => (
                     <div key={project.id} className="p-4 border rounded-lg hover:bg-muted cursor-pointer" onClick={() => {
-                        console.log(project, "project name a");
-
                         dispatch(setProject({
                             id: project.id,
                             name: project.name,
