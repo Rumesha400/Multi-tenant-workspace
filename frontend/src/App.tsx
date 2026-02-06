@@ -5,10 +5,12 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Projects from "./pages/projects/Projects";
 import Tasks from "./pages/tasks/tasks";
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <AppLayout>
+      <Toaster position="top-right" richColors />
       <Routes>
         <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />

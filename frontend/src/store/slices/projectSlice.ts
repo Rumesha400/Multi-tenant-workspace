@@ -20,7 +20,6 @@ const projectSlice = createSlice({
     ) => {
       state.currentProjectId = action.payload.id;
       state.currentProjectName = action.payload.name;
-      console.log(action.payload, "action.payload");
 
       localStorage.setItem("projectId", action.payload.id);
       localStorage.setItem("projectName", action.payload.name);

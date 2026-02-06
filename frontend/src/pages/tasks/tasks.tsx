@@ -1,4 +1,5 @@
 import CommonLoader from "@/components/common/Loader";
+import CreateTaskModal from "@/components/tasks/CreateTaskModal";
 import type { RootState } from "@/store"
 import { useGetTasksQuery } from "@/store/api/taskApi";
 import { useEffect } from "react";
@@ -15,7 +16,6 @@ export default function Tasks() {
         sortBy: "createdAt",
         order: "desc",
     }, { skip: !projectId });
-    console.log(data, "data of tasks", projectId);
 
     useEffect(() => {
         if (!projectId) {
@@ -26,7 +26,7 @@ export default function Tasks() {
     return isLoading ? <CommonLoader /> : (
         <div className="p-6 space-y-4">
             <h1 className="text-xl font-bold">Tasks</h1>
-
+            <CreateTaskModal />
             {data?.data?.map((task: any) => (
                 <div
                     key={task.id}

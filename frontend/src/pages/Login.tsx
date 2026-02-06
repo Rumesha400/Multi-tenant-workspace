@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/slices/authSlice";
+import { toast } from "sonner";
 
 export default function Login() {
     const [email, setEmail] = useState("")
@@ -24,10 +25,10 @@ export default function Login() {
             const res = await loginMutation({ email, password }).unwrap()
 
             dispatch(loginSuccess(res.access_token))
-
+            toast.success("Login successful", { duration: 1000 })
             navigate("/")
         } catch (err: any) {
-            alert(err?.data?.detail || "Login failed")
+            toast.error(err?.data?.detail || "Login failed", { duration: 1000 })
         }
     }
 
