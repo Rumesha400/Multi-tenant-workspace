@@ -1,15 +1,18 @@
+// frontend\src\pages\tasks\tasks.tsx
+
 import CommonLoader from "@/components/common/Loader";
 import CreateTaskModal from "@/components/tasks/CreateTaskModal";
 import type { RootState } from "@/store"
 import { useGetTasksQuery } from "@/store/api/taskApi";
+import { handleApiError } from "@/utils/errorHandler";
 import { useEffect } from "react";
-import { useSelector } from "react-redux"
-import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux"
 
 export default function Tasks() {
+    const dispatch = useDispatch();
     const projectId = useSelector((state: RootState) => state.project.currentProjectId);
 
-    const { data, isLoading } = useGetTasksQuery({
+    const { data, isLoading, error } = useGetTasksQuery({
         projectId: projectId || "",
         page: 1,
         limit: 10,
@@ -18,10 +21,10 @@ export default function Tasks() {
     }, { skip: !projectId });
 
     useEffect(() => {
-        if (!projectId) {
-            toast.error("Please select a project");
+        if (error) {
+            handleApiError(error, dispatch)
         }
-    }, [projectId]);
+    }, [error, dispatch]);
 
     return isLoading ? <CommonLoader /> : (
         <div className="p-6 space-y-4">

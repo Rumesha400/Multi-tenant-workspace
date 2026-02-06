@@ -1,3 +1,5 @@
+// frontend\src\store\slices\authSlice.ts
+
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
@@ -6,7 +8,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem("token") || null,
+  token: localStorage.getItem("token"),
   isAuthenticated: !!localStorage.getItem("token"),
 };
 
@@ -20,9 +22,11 @@ const authSlice = createSlice({
       localStorage.setItem("token", action.payload);
     },
     logout: (state) => {
-      ((state.token = null),
-        (state.isAuthenticated = false),
-        localStorage.removeItem("token"));
+      state.token = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("token");
+      localStorage.removeItem("projectId");
+      localStorage.removeItem("projectName");
     },
   },
 });

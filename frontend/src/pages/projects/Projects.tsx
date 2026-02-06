@@ -1,3 +1,5 @@
+// frontend\src\pages\projects\Projects.tsx
+
 import { useEffect } from "react";
 import CommonLoader from "@/components/common/Loader";
 import CreateProjectDialog from "@/components/projects/CreateProjectDialog";
@@ -5,7 +7,7 @@ import { useGetProjectsQuery } from "@/store/api/projectApi";
 import { setProject } from "@/store/slices/projectSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { handleApiError } from "@/utils/errorHandler";
 
 export default function Projects() {
     const { data, isLoading, error } = useGetProjectsQuery();
@@ -14,11 +16,10 @@ export default function Projects() {
 
     useEffect(() => {
         if (error) {
-            const err = error as any;
-            toast.error(err?.data?.detail || "Failed to fetch projects", { duration: 1000 });
+            handleApiError(error, dispatch)
             navigate(`/login`);
         }
-    }, [error]);
+    }, [error, dispatch]);
 
     return (isLoading ? <CommonLoader /> : (
         <div className="p-6 space-y-4">

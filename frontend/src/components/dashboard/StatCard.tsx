@@ -1,3 +1,5 @@
+// frontend\src\components\dashboard\StatCard.tsx
+
 import type { ReactNode } from "react";
 import { Card, CardContent } from "../ui/card";
 
