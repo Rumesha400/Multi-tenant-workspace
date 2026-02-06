@@ -1,3 +1,5 @@
+// frontend\src\components\common\Loader.tsx
+
 export default function CommonLoader() {
     return (
         <div className="flex justify-center items-center p-8">

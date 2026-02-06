@@ -1,3 +1,5 @@
+// frontend\src\components\tasks\CreateTaskForm.tsx
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +19,8 @@ import {
 
 import { useCreateTaskMutation } from "@/store/api/taskApi";
 import type { RootState } from "@/store";
+import { useState } from "react";
+import { useGetProjectMembersQuery } from "@/store/api/projectApi";
 
 /* ---------------- Schema ---------------- */
 
@@ -40,6 +44,9 @@ export default function CreateTaskForm({ onSuccess }: Props) {
     );
 
     const [createTask, { isLoading }] = useCreateTaskMutation();
+    const [assigneeId, setAssigneeId] = useState<string | null>(null);
+
+    const { data: members, isLoading: membersLoading } = useGetProjectMembersQuery(projectId!, { skip: !projectId })
 
     const form = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -58,6 +65,7 @@ export default function CreateTaskForm({ onSuccess }: Props) {
             await createTask({
                 projectId,
                 ...data,
+                assigneeId: assigneeId || undefined,
             }).unwrap();
 
             toast.success("Task created");
@@ -111,13 +119,38 @@ export default function CreateTaskForm({ onSuccess }: Props) {
                 </SelectContent>
             </Select>
 
+            <div className="space-y-2">
+                <label className="text-sm font-medium">Assign To</label>
+
+                <Select
+                    value={assigneeId ?? ""}
+                    onValueChange={(val) => setAssigneeId(val)}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select member" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                        {members?.map((member) => (
+                            <SelectItem
+                                key={member.userId}
+                                value={member.userId}
+                            >
+                                {member.name} ({member.role})
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+
             {/* Actions */}
             <div className="flex justify-end gap-2">
                 <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || membersLoading}
                 >
-                    {isLoading ? "Creating..." : "Create"}
+                    {isLoading || membersLoading ? "Creating..." : "Create"}
                 </Button>
             </div>
         </form>

@@ -1,3 +1,5 @@
+// frontend\src\pages\Dashboard.tsx
+
 import StatCard from "@/components/dashboard/StatCard";
 import { AlertCircle, CheckCircle, Clock, Folder, ListTodo } from "lucide-react";
 

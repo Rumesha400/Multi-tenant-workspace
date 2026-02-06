@@ -1,3 +1,5 @@
+// frontend\src\store\slices\projectSlice.ts
+
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface ProjectState {
@@ -20,7 +22,6 @@ const projectSlice = createSlice({
     ) => {
       state.currentProjectId = action.payload.id;
       state.currentProjectName = action.payload.name;
-
       localStorage.setItem("projectId", action.payload.id);
       localStorage.setItem("projectName", action.payload.name);
     },
@@ -28,7 +29,6 @@ const projectSlice = createSlice({
     clearProject: (state) => {
       state.currentProjectId = null;
       state.currentProjectName = null;
-
       localStorage.removeItem("projectId");
       localStorage.removeItem("projectName");
     },

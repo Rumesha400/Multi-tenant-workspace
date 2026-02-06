@@ -1,3 +1,5 @@
+// frontend\src\app\layout.tsx
+
 import Sidebar from "@/components/common/Sidebar";
 import type { ReactNode } from "react";
 

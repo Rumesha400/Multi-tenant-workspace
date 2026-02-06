@@ -1,7 +1,8 @@
+// frontend\src\pages\Login.tsx
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "@/store/api/authApi";
@@ -15,7 +16,6 @@ export default function Login() {
     const [loginMutation, { isLoading }] = useLoginMutation()
 
     const navigate = useNavigate()
-    const { login } = useAuth()
     const dispatch = useDispatch()
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
