@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from bson import ObjectId
 from app.schemas.project import CreateProjectRequest
 from app.core.tenant import get_tenant_context
-from app.db.mongo import projects_collection, project_members_collection, org_members_collection
+from app.db.mongo import projects_collection, project_members_collection, org_members_collection, users_collection
 from app.core.permissions import require_role
 from app.schemas.project_member import AddProjectMemberRequest
 
@@ -113,3 +113,48 @@ async def add_project_member(project_id: str, payload: AddProjectMemberRequest, 
     })
 
     return {"message": "Member added successfully"}
+
+@router.get("/{project_id}/members")
+async def list_project_members(project_id: str, tenant=Depends(get_tenant_context)):
+    # Verify project exists and belongs to the tenant's organization
+    project = await projects_collection.find_one({
+        "_id": ObjectId(project_id),
+        "orgId": ObjectId(tenant["org_id"])
+    })
+    
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Access control: OWNER can see all, MEMBER must be part of the project
+    if tenant["role"] != "OWNER":
+        is_member = await project_members_collection.find_one({
+            "projectId": ObjectId(project_id),
+            "userId": ObjectId(tenant["user_id"])
+        })
+        if not is_member:
+            raise HTTPException(status_code=403, detail="Access denied to project members")
+
+    # Fetch members with user details using aggregation
+    cursor = project_members_collection.aggregate([
+        { "$match": { "projectId": ObjectId(project_id) } },
+        {
+            "$lookup": {
+                "from": "users",
+                "localField": "userId",
+                "foreignField": "_id",
+                "as": "user"
+            }
+        },
+        { "$unwind": "$user" },
+        {
+            "$project": {
+                "_id": 0,
+                "userId": { "$toString": "$user._id" },
+                "name": "$user.name",
+                "email": "$user.email",
+                "role": 1
+            }
+        }
+    ])
+
+    return [doc async for doc in cursor]
