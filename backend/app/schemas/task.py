@@ -24,5 +24,5 @@ class UpdateTaskRequest(BaseModel):
     status: Optional[str] = None 
     assigneeId: Optional[str] = None
     priority: Optional[str] = None
-    labels: Optional[List[str]]
+    labels: Optional[List[str]] = None
     dueDate: Optional[datetime] = None

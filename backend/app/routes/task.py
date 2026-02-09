@@ -200,7 +200,7 @@ async def list_tasks(
         }
     }
 
-@router.patch("/{taskId}")
+@router.patch("/{task_id}")
 async def update_task(task_id: str, payload: UpdateTaskRequest, tenant = Depends(get_tenant_context)):
     task = await tasks_collection.find_one({"_id": ObjectId(task_id), "orgId": ObjectId(tenant["org_id"]), "isDeleted": False})
 
