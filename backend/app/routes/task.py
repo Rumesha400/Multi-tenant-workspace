@@ -183,6 +183,7 @@ async def list_tasks(
             "status": doc["status"],
             "assigneeId": str(doc["assigneeId"]) if doc.get("assigneeId") else None,
             "priority": doc.get("priority", "MEDIUM"),
+            "labels": doc.get("labels", []),
             "dueDate": doc.get("dueDate"),
             "isOverdue": is_overdue,
             "createdAt": doc.get("createdAt"),
