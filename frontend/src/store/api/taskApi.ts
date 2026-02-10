@@ -1,4 +1,4 @@
-import { baseApi } from "./baseApi";
+import { baseApi } from "./baseQuery";
 
 export interface CreateTaskPayload {
   projectId: string;
@@ -37,6 +37,7 @@ export const taskApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Tasks"],
     }),
+    
     createTask: builder.mutation<any, CreateTaskPayload>({
       query: ({ projectId, ...body }) => ({
         url: `/tasks`,

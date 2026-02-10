@@ -11,7 +11,7 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: "TODO" | "IN_PROGRESS" | "DONE";
+  status: "OPEN" | "IN_PROGRESS" | "DONE";
   projectId: string;
   orgId: string;
   createdBy: string;
@@ -37,4 +37,24 @@ export interface ApiResponse<T> {
   total?: number;
   page?: number;
   limit?: number;
+}
+
+export interface ApiErrorResponse {
+    status: number;
+    data: {
+        detail: string;
+    };
+}
+
+export interface KanbanBoardProps {
+  tasks: any[];
+}
+
+export interface KanbanColumnProps {
+    status: string;
+    tasks: any[];
+}
+
+export interface KanbanCardProps {
+    task: any;
 }

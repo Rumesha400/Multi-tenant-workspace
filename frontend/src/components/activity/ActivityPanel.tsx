@@ -1,0 +1,37 @@
+import { useSelector } from "react-redux";
+import CommonLoader from "../common/Loader";
+import type { RootState } from "@/store";
+import { useGetProjectActivityQuery } from "@/store/api/taskApi";
+
+export default function ActivityPanel() {
+  const projectId = useSelector(
+    (state: RootState) => state.project.currentProjectId
+  );
+
+  const { data, isLoading } = useGetProjectActivityQuery(projectId!, {
+    skip: !projectId,
+  });
+
+  if (!projectId) return null;
+
+  if (isLoading) return <CommonLoader />;
+
+  return (
+    <div className="w-full lg:w-[320px] border-1 bg-background p-4 space-y-3">
+      <h3 className="font-semibold text-sm">Activity</h3>
+
+      <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
+        {data?.map((item: any) => (
+          <div className="text-sm border-b pb-2 last:border-0" key={item.id}>
+            <p className="font-medium">{item.username}</p>
+            <p className="text-muted-foreground text-xs">{item.message}</p>
+
+            <p className="text-xs text-muted-foreground mt-1">
+              {new Date(item.createdAt).toLocaleDateString() + " • " + new Date(item.createdAt).toLocaleTimeString()}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

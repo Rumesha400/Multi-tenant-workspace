@@ -1,7 +1,7 @@
 // frontend\src\store\index.ts
 
 import { configureStore } from "@reduxjs/toolkit";
-import { baseApi } from "./api/baseApi";
+import { baseApi } from "./api/baseQuery";
 import authReducer from "./slices/authSlice";
 import projectReducer from "./slices/projectSlice";
 
