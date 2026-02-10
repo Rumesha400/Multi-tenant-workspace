@@ -23,6 +23,7 @@ export default function CreateProjectDialog() {
             setName("");
             setDescription("");
         } catch (error) {
+            console.error("Failed to create project:", error);
             toast.error("Failed to create project");
         }
     }

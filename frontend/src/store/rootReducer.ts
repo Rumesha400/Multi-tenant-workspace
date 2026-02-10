@@ -1,7 +1,7 @@
 // frontend\src\store\rootReducer.ts
 
 import { combineReducers } from "@reduxjs/toolkit";
-import { baseApi } from "./api/baseApi";
+import { baseApi } from "./api/baseQuery";
 import authReducer from "./slices/authSlice";
 import projectReducer from "./slices/projectSlice";
 

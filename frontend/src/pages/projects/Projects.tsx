@@ -1,25 +1,17 @@
 // frontend\src\pages\projects\Projects.tsx
 
-import { useEffect } from "react";
 import CommonLoader from "@/components/common/Loader";
 import CreateProjectDialog from "@/components/projects/CreateProjectDialog";
 import { useGetProjectsQuery } from "@/store/api/projectApi";
 import { setProject } from "@/store/slices/projectSlice";
+import type { Project } from "@/types";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { handleApiError } from "@/utils/errorHandler";
 
 export default function Projects() {
-    const { data, isLoading, error } = useGetProjectsQuery();
+    const { data, isLoading } = useGetProjectsQuery();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (error) {
-            handleApiError(error, dispatch)
-            navigate(`/login`);
-        }
-    }, [error, dispatch]);
 
     return (isLoading ? <CommonLoader /> : (
         <div className="p-6 space-y-4">
@@ -28,7 +20,7 @@ export default function Projects() {
                 <CreateProjectDialog />
             </div>
             <div className="grid gap-4">
-                {data?.map((project: any) => (
+                {data?.map((project: Project) => (
                     <div key={project.id} className="p-4 border rounded-lg hover:bg-muted cursor-pointer" onClick={() => {
                         dispatch(setProject({
                             id: project.id,

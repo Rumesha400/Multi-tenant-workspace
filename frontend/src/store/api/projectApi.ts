@@ -1,5 +1,5 @@
 import type { Project, ProjectMember } from "@/types";
-import { baseApi } from "./baseApi";
+import { baseApi } from "./baseQuery";
 
 export const projectApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
