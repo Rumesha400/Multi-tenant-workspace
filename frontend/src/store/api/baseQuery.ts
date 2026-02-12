@@ -30,15 +30,14 @@ const baseQueryWithAuth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   const result = await rawBaseQuery(args, api, extraOptions);
 
-  // const message =
-  //   (result?.error?.data as { message?: string } | undefined)?.message ||
-  //   "Something went wrong";
+  // Determine the request URL to avoid redirecting on login failures
+  const requestUrl = typeof args === "string" ? args : args.url;
 
-  if (result.error?.status === 401) {
+  if (result.error?.status === 401 && !requestUrl.includes("/auth/login")) {
     api.dispatch(logout());
     window.location.href = "/login";
   }
-  // toast.error(message);
+
   return result;
 };
 
