@@ -7,20 +7,28 @@ import type { RootState } from "@/store";
 import { useGetTasksQuery } from "@/store/api/taskApi";
 import { useSelector } from "react-redux";
 import ActivityPanel from "@/components/activity/ActivityPanel";
+import { useState } from "react";
+import TaskFilters from "@/components/tasks/TaskFilters";
 
 export default function Tasks() {
   const projectId = useSelector(
     (state: RootState) => state.project.currentProjectId,
   );
 
-  const { data, isLoading } = useGetTasksQuery(
-    {
-      projectId: projectId || "",
-      page: 1,
-      limit: 10,
-      sortBy: "createdAt",
-      order: "desc",
-    },
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [priority, setPriority] = useState<string | null>(null);
+
+  const { data, isLoading } = useGetTasksQuery({
+    projectId: projectId || "",
+    search: search || undefined,
+    status: status || undefined,
+    priority: priority || undefined,
+    page: 1,
+    limit: 10,
+    sortBy: "createdAt",
+    order: "desc",
+  },
     { skip: !projectId },
   );
 
@@ -31,32 +39,46 @@ export default function Tasks() {
       <h1 className="text-xl font-bold">Tasks</h1>
       <CreateTaskModal />
       {/* {data?.data?.map((task: Task) => (
-                <div
-                    key={task.id}
-                    className="border rounded-lg p-4 flex justify-between items-start"
-                ><h3 className="font-medium">{task.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                        {task.status} • {task.priority}
-                    </p>
-                    <Button
-                        size="lg"
-                        variant="outline"
-                        onClick={() => setSelectedTask(task)}
-                    >
-                        Edit
-                    </Button>
-                </div>
-            ))} */}
+          <div
+              key={task.id}
+              className="border rounded-lg p-4 flex justify-between items-start"
+          ><h3 className="font-medium">{task.title}</h3>
+              <p className="text-sm text-muted-foreground">
+                  {task.status} • {task.priority}
+              </p>
+              <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => setSelectedTask(task)}
+              >
+                  Edit
+              </Button>
+          </div>
+      ))} */}
 
-<div className="flex gap-4">
-    <div className="flex-1">
-      {data?.data && <KanbanBoard tasks={data.data || []} />}
-    </div>
+      <TaskFilters
+        search={search}
+        setSearch={setSearch}
+        status={status}
+        setStatus={setStatus}
+        priority={priority}
+        setPriority={setPriority}
+        onReset={() => {
+          setSearch("");
+          setStatus(null);
+          setPriority(null);
+        }}
+      />
 
-    <div className="hidden lg:block">
-        <ActivityPanel />
-    </div>
-</div>
+      <div className="flex gap-4">
+        <div className="flex-1">
+          {data?.data && <KanbanBoard tasks={data.data || []} />}
+        </div>
+
+        <div className="hidden lg:block">
+          <ActivityPanel />
+        </div>
+      </div>
 
       {/* <EditTaskModal
                 open={!!selectedTask}

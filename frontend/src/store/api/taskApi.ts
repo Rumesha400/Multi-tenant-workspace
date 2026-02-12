@@ -13,8 +13,10 @@ export interface CreateTaskPayload {
 export interface GetTasksParams {
   projectId: string;
 
+  search?: string;
   status?: string;
   assigneeId?: string;
+  priority?: string;
 
   page?: number;
   limit?: number;
@@ -37,7 +39,7 @@ export const taskApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Tasks"],
     }),
-    
+
     createTask: builder.mutation<any, CreateTaskPayload>({
       query: ({ projectId, ...body }) => ({
         url: `/tasks`,
