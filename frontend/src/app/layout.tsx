@@ -12,7 +12,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 <Sidebar />
             </aside>
             {/* Main Content  */}
-            <main className="flex-1 p-6 overflow-auto">
+            <main className="flex-1 p-4 overflow-auto">
                 {children}
             </main>
         </div>

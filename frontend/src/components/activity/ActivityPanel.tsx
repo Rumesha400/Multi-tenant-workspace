@@ -16,8 +16,25 @@ export default function ActivityPanel() {
 
   if (isLoading) return <CommonLoader />;
 
+  const formatActivityTime = (date: string) => {
+    const d = new Date(date);
+
+    const datePart = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+    }).format(d);
+
+    const timePart = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }).format(d);
+
+    return `${datePart} • ${timePart}`;
+  };
+
   return (
-    <div className="w-full lg:w-[320px] border-1 bg-background p-4 space-y-3">
+    <div className="w-full lg:w-[250px] border-1 bg-background space-y-3">
       <h3 className="font-semibold text-sm">Activity</h3>
 
       <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
@@ -27,7 +44,8 @@ export default function ActivityPanel() {
             <p className="text-muted-foreground text-xs">{item.message}</p>
 
             <p className="text-xs text-muted-foreground mt-1">
-              {new Date(item.createdAt).toLocaleDateString() + " • " + new Date(item.createdAt).toLocaleTimeString()}
+              {formatActivityTime(item.createdAt)}
+
             </p>
           </div>
         ))}
