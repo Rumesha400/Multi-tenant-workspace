@@ -109,6 +109,8 @@ async def list_tasks(
     projectId: str, 
     assignedToMe: bool = False,
     status: str | None = None,
+    priority: str | None = None,
+    search: str | None = None,
     assigneeId: str | None = None,
     page: int = 1,
     limit: int = 10,
@@ -142,6 +144,11 @@ async def list_tasks(
         query ["assigneeId"] = ObjectId(tenant["user_id"])
 
     if status: query["status"] = status 
+
+    if priority: query["priority"] = priority
+
+    if search:
+        query["title"] = {"$regex": search, "$options": "i"}
 
     if assigneeId: 
         if assigneeId == "assignedToMe":
