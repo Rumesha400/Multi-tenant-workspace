@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "@/store/slices/authSlice";
+import { setCredentials } from "@/store/slices/authSlice";
 import { toast } from "sonner";
 
 export default function Login() {
@@ -46,7 +46,7 @@ export default function Login() {
         try {
             const res = await loginMutation({ email, password }).unwrap()
 
-            dispatch(loginSuccess(res.access_token))
+            dispatch(setCredentials(res.access_token))
             toast.success("Login successful", { duration: 1000 })
             navigate("/")
         } catch (err: any) {

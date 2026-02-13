@@ -40,21 +40,28 @@ export interface ApiResponse<T> {
 }
 
 export interface ApiErrorResponse {
-    status: number;
-    data: {
-        detail: string;
-    };
+  status: number;
+  data: {
+    detail: string;
+  };
 }
 
 export interface KanbanBoardProps {
   tasks: any[];
+  selectedIds: string[];
+  onSelect: (id: string) => void;
 }
 
 export interface KanbanColumnProps {
-    status: string;
-    tasks: any[];
+  status: string;
+  tasks: any[];
+  selectedIds: string[];
+  onSelect: (id: string) => void;
 }
 
 export interface KanbanCardProps {
-    task: any;
+  task: any;
+  selected?: boolean;
+  onSelect?: (id: string) => void;
+  isDragging?: boolean;
 }
