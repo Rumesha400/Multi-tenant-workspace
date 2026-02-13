@@ -18,7 +18,7 @@ import React from "react";
 //     );
 // }
 
-const KanbanColumn = ({ status, tasks }: KanbanColumnProps) => {
+const KanbanColumn = ({ status, tasks, selectedIds, onSelect }: KanbanColumnProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
   });
@@ -26,16 +26,15 @@ const KanbanColumn = ({ status, tasks }: KanbanColumnProps) => {
   return (
     <div
       ref={setNodeRef}
-      className={`bg-gray-50 rounded-lg p-4 min-h-[400px] transition-colors ${
-        isOver ? "bg-blue-50 ring-2 ring-blue-300" : ""
-      }`}
+      className={`bg-gray-50 rounded-lg p-4 min-h-[400px] transition-colors ${isOver ? "bg-blue-50 ring-2 ring-blue-300" : ""
+        }`}
     >
       <h2 className="font-semibold text-lg mb-4 capitalize">
         {status.replace("_", " ")}
       </h2>
       <div className="space-y-3">
         {tasks.map((task) => (
-          <KanbanCard key={task.id} task={task} />
+          <KanbanCard key={task.id} task={task} selected={selectedIds.includes(task.id)} onSelect={onSelect} />
         ))}
       </div>
     </div>

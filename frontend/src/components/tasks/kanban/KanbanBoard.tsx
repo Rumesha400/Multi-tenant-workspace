@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 
 const STATUSES = ["OPEN", "IN_PROGRESS", "BLOCKED", "DONE"];
 
-export default function KanbanBoard({ tasks }: KanbanBoardProps) {
+export default function KanbanBoard({ tasks, selectedIds, onSelect }: KanbanBoardProps) {
   const getErrorMessage = useApiError();
   const [updateTask, { isLoading }] = useUpdateTaskMutation();
   const [activeTask, setActiveTask] = useState(null);
@@ -30,7 +30,7 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
 
   const role = useSelector((state: any) => state.auth?.user?.role) || "MEMBER";
   console.log(role, "role");
-  
+
 
   // Better drag activation - prevents accidental drags
   const sensors = useSensors(
@@ -75,11 +75,11 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
       toast.error("You are not allowed to move tasks");
       return;
     }
-    
+
     const { active, over } = event;
-    
+
     setActiveTask(null);
-    
+
     if (!over || active.id === over.id) return;
 
     const taskId = active.id as string;
@@ -139,28 +139,30 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
         onDragStart={onDragStart}
         onDragCancel={onDragCancel}
       >
-          {Object.entries(grouped).map(([assigneeId, list]) => {
-            const name = list[0]?.assignee?.name || "Unassigned";
+        {Object.entries(grouped).map(([assigneeId, list]) => {
+          const name = list[0]?.assignee?.name || "Unassigned";
 
-            return (
-              <>
-                <div className="space-y-3" key={assigneeId}>
-                  <h3 className="font-semibold text-sm text-muted-foreground">
-                    {name}
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {STATUSES.map((status) => (
-                    <KanbanColumn
-                      key={status}
-                      status={status}
-                      tasks={list.filter((t) => t.status === status)}
-                    />
-                  ))}
-                </div>
-              </>
-            );
-          })}
+          return (
+            <>
+              <div className="space-y-3" key={assigneeId}>
+                <h3 className="font-semibold text-sm text-muted-foreground">
+                  {name}
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {STATUSES.map((status) => (
+                  <KanbanColumn
+                    key={status}
+                    status={status}
+                    tasks={list.filter((t) => t.status === status)}
+                    selectedIds={selectedIds}
+                    onSelect={onSelect}
+                  />
+                ))}
+              </div>
+            </>
+          );
+        })}
         <DragOverlay dropAnimation={null}>
           {activeTask ? (
             <div className="w-full max-w-[280px] opacity-90 rotate-3 cursor-grabbing">

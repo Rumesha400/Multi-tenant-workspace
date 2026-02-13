@@ -7,21 +7,50 @@ import type { RootState } from "@/store";
 import { useGetTasksQuery } from "@/store/api/taskApi";
 import { useSelector } from "react-redux";
 import ActivityPanel from "@/components/activity/ActivityPanel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import TaskFilters from "@/components/tasks/TaskFilters";
+import { useDebounce } from "use-debounce";
 
 export default function Tasks() {
   const projectId = useSelector(
     (state: RootState) => state.project.currentProjectId,
   );
 
+  const [params, setParams] = useSearchParams();
+
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 400);
   const [status, setStatus] = useState<string | null>(null);
   const [priority, setPriority] = useState<string | null>(null);
 
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // On page load → restore filters from URL
+  useEffect(() => {
+    const s = params.get("search");
+    const st = params.get("status");
+    const p = params.get("priority");
+
+    if (s) setSearch(s);
+    if (st) setStatus(st);
+    if (p) setPriority(p);
+  }, []);
+
+  // When filters change → update the URL
+  useEffect(() => {
+    const query: Record<string, string> = {};
+
+    if (debouncedSearch) query.search = debouncedSearch;
+    if (status) query.status = status;
+    if (priority) query.priority = priority;
+
+    setParams(query, { replace: true });
+  }, [debouncedSearch, status, priority]);
+
   const { data, isLoading } = useGetTasksQuery({
     projectId: projectId || "",
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     status: status || undefined,
     priority: priority || undefined,
     page: 1,
@@ -32,29 +61,20 @@ export default function Tasks() {
     { skip: !projectId },
   );
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id]
+    )
+  }
+
   return isLoading ? (
     <CommonLoader />
   ) : (
     <div className="p-6 space-y-4">
       <h1 className="text-xl font-bold">Tasks</h1>
       <CreateTaskModal />
-      {/* {data?.data?.map((task: Task) => (
-          <div
-              key={task.id}
-              className="border rounded-lg p-4 flex justify-between items-start"
-          ><h3 className="font-medium">{task.title}</h3>
-              <p className="text-sm text-muted-foreground">
-                  {task.status} • {task.priority}
-              </p>
-              <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => setSelectedTask(task)}
-              >
-                  Edit
-              </Button>
-          </div>
-      ))} */}
 
       <TaskFilters
         search={search}
@@ -72,7 +92,7 @@ export default function Tasks() {
 
       <div className="flex gap-4">
         <div className="flex-1">
-          {data?.data && <KanbanBoard tasks={data.data || []} />}
+          {data?.data && <KanbanBoard tasks={data.data || []} onSelect={toggleSelect} selectedIds={selectedIds} />}
         </div>
 
         <div className="hidden lg:block">
@@ -80,11 +100,6 @@ export default function Tasks() {
         </div>
       </div>
 
-      {/* <EditTaskModal
-                open={!!selectedTask}
-                task={selectedTask}
-                onClose={() => setSelectedTask(null)}
-            /> */}
     </div>
   );
 }

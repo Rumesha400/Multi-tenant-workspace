@@ -6,11 +6,12 @@ import type { KanbanCardProps } from "@/types";
 import EditTaskModal from "../EditTaskModal";
 import { GripVertical } from "lucide-react";
 
-export default function KanbanCard({ task }: KanbanCardProps) {
+export default function KanbanCard({ task, selected, onSelect }: KanbanCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
+    disabled: selected,
   });
 
   const style = { transform: CSS.Translate.toString(transform) };
@@ -26,7 +27,12 @@ export default function KanbanCard({ task }: KanbanCardProps) {
         <div {...attributes} {...listeners} className="absolute top-2 right-2 text-muted-foreground opacity-0 group-hover:opacity-100 cursor-grab">
           <GripVertical size={16} />
         </div>
-        <h4 className="text-sm font-medium leading-snug">{task.title}</h4>
+        <div className="flex items-start gap-2">
+          {onSelect && (
+            <input type="checkbox" checked={selected} onClick={(e) => e.stopPropagation()} className="mt-1 accent-primary" onChange={() => onSelect(task.id)} />
+          )}
+          <h4 className="text-sm font-medium leading-snug">{task.title}</h4>
+        </div>
 
         {task.labels?.length > 0 && (
           <div className="flex flex-wrap gap-1">
@@ -46,11 +52,11 @@ export default function KanbanCard({ task }: KanbanCardProps) {
 
           {task.assignee?.name && (
             <div className="w-7 h-7 rounded-full bg-primary/10 text-xs flex items-center justify-center font-semibold">
-                {task.assignee.name.charAt(0).toUpperCase()}
+              {task.assignee.name.charAt(0).toUpperCase()}
             </div>
           )}
         </div>
-        </div>
+      </div>
       <EditTaskModal
         open={isOpen}
         task={task}
