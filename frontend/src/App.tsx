@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 import Login from "./pages/Login";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Projects from "./pages/projects/Projects";
-import Tasks from "./pages/tasks/Tasks";
+import Tasks from "./pages/tasks/tasks";
 
 function App() {
   const location = useLocation();
