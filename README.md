@@ -1,4 +1,4 @@
-# Multi-Tenant Product Management System
+# Multi-Tenant Management System
 
 A scalable, enterprise-grade full-stack application for managing products, projects, and tasks across multiple organizations with role-based access control.
 
@@ -52,7 +52,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-multi-tenant-product-management/
+multi-tenant-workspace/
 ├── backend/                     # FastAPI Application
 │   ├── app/
 │   │   ├── core/               # Config & security
