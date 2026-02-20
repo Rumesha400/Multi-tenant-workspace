@@ -93,4 +93,4 @@ Contributions are welcome! Please ensure:
 
 ---
 
-**Built with ❤️ for modern development teams**
+**Built with ❤️ for modern development teams.**
